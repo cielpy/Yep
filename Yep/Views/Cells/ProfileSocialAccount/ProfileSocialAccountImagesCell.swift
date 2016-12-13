@@ -7,9 +7,11 @@
 //
 
 import UIKit
+import YepKit
+import YepNetworking
 import Kingfisher
 
-class ProfileSocialAccountImagesCell: UICollectionViewCell {
+final class ProfileSocialAccountImagesCell: UICollectionViewCell {
     
     var socialAccount: SocialAccount?
 
@@ -186,12 +188,12 @@ class ProfileSocialAccountImagesCell: UICollectionViewCell {
 
                     case .Dribbble:
                         dribbbleWorkOfUserWithUserID(userID, failureHandler: { (reason, errorMessage) -> Void in
-                            defaultFailureHandler(reason, errorMessage: errorMessage)
+                            defaultFailureHandler(reason: reason, errorMessage: errorMessage)
 
                         }, completion: { dribbbleWork in
                             //println("dribbbleWork: \(dribbbleWork.shots.count)")
 
-                            dispatch_async(dispatch_get_main_queue()) {
+                            SafeDispatch.async {
                                 let socialWork = SocialWork.Dribbble(dribbbleWork)
 
                                 self.socialWork = socialWork
@@ -202,12 +204,12 @@ class ProfileSocialAccountImagesCell: UICollectionViewCell {
 
                     case .Instagram:
                         instagramWorkOfUserWithUserID(userID, failureHandler: { (reason, errorMessage) -> Void in
-                            defaultFailureHandler(reason, errorMessage: errorMessage)
+                            defaultFailureHandler(reason: reason, errorMessage: errorMessage)
 
                         }, completion: { instagramWork in
                             //println("instagramWork: \(instagramWork.medias.count)")
 
-                            dispatch_async(dispatch_get_main_queue()) {
+                            SafeDispatch.async {
                                 let socialWork = SocialWork.Instagram(instagramWork)
 
                                 self.socialWork = socialWork

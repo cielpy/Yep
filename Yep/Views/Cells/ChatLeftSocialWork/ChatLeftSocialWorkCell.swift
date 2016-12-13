@@ -7,9 +7,10 @@
 //
 
 import UIKit
+import YepKit
 import Kingfisher
 
-class ChatLeftSocialWorkCell: UICollectionViewCell {
+final class ChatLeftSocialWorkCell: UICollectionViewCell {
 
     @IBOutlet weak var avatarImageView: UIImageView!
 
@@ -26,7 +27,7 @@ class ChatLeftSocialWorkCell: UICollectionViewCell {
     @IBOutlet weak var centerLineImageView: UIImageView!
 
     lazy var maskImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "social_media_image_mask"))
+        let imageView = UIImageView(image: UIImage.yep_socialMediaImageMask)
         return imageView
     }()
 
@@ -63,7 +64,7 @@ class ChatLeftSocialWorkCell: UICollectionViewCell {
     func configureWithMessage(message: Message) {
 
         if let sender = message.fromFriend {
-            let userAvatar = UserAvatar(userID: sender.userID, avatarStyle: nanoAvatarStyle)
+            let userAvatar = UserAvatar(userID: sender.userID, avatarURLString: sender.avatarURLString, avatarStyle: nanoAvatarStyle)
             avatarImageView.navi_setAvatar(userAvatar, withFadeTransitionDuration: avatarFadeTransitionDuration)
         }
 

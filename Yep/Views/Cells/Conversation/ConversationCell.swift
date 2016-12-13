@@ -7,9 +7,10 @@
 //
 
 import UIKit
+import YepKit
 import Kingfisher
 
-class ConversationCell: UITableViewCell {
+final class ConversationCell: UITableViewCell {
 
     var conversation: Conversation!
 
@@ -48,10 +49,15 @@ class ConversationCell: UITableViewCell {
 //        NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateUIButAvatar:", name: YepConfig.Notification.newMessages, object: nil)
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
+    override func prepareForReuse() {
+        super.prepareForReuse()
 
-        // Configure the view for the selected state
+        avatarImageView.image = nil
+        nameLabel.text = nil
+        chatLabel.text = nil
+        timeAgoLabel.text = nil
+
+        countOfUnreadMessages = 0
     }
 
 //    func updateUIButAvatar(sender: NSNotification) {
@@ -69,21 +75,8 @@ class ConversationCell: UITableViewCell {
 
     func updateInfoLabels() {
 
-        if let latestValidMessage = conversation.latestValidMessage {
-
-            if let mediaType = MessageMediaType(rawValue: latestValidMessage.mediaType), placeholder = mediaType.placeholder {
-                self.chatLabel.text = placeholder
-            } else {
-                self.chatLabel.text = latestValidMessage.textContent
-            }
-
-            let createdAt = NSDate(timeIntervalSince1970: latestValidMessage.createdUnixTime)
-            self.timeAgoLabel.text = createdAt.timeAgo
-
-        } else {
-            self.chatLabel.text = NSLocalizedString("No messages yet.", comment: "")
-            self.timeAgoLabel.text = NSDate(timeIntervalSince1970: conversation.updatedUnixTime).timeAgo
-        }
+        self.chatLabel.text = conversation.latestMessageTextContentOrPlaceholder ?? NSLocalizedString("No messages yet.", comment: "")
+        self.timeAgoLabel.text = NSDate(timeIntervalSince1970: conversation.updatedUnixTime).timeAgo
     }
 
     func configureWithConversation(conversation: Conversation, avatarRadius radius: CGFloat, tableView: UITableView, indexPath: NSIndexPath) {
@@ -98,7 +91,7 @@ class ConversationCell: UITableViewCell {
 
                 self.nameLabel.text = conversationWithFriend.nickname
 
-                let userAvatar = UserAvatar(userID: conversationWithFriend.userID, avatarStyle: miniAvatarStyle)
+                let userAvatar = UserAvatar(userID: conversationWithFriend.userID, avatarURLString: conversationWithFriend.avatarURLString, avatarStyle: miniAvatarStyle)
                 avatarImageView.navi_setAvatar(userAvatar, withFadeTransitionDuration: avatarFadeTransitionDuration)
 
                 updateInfoLabels()
@@ -118,17 +111,17 @@ class ConversationCell: UITableViewCell {
                 }
 
                 if let user = group.owner {
-                    let userAvatar = UserAvatar(userID: user.userID, avatarStyle: miniAvatarStyle)
+                    let userAvatar = UserAvatar(userID: user.userID, avatarURLString: user.avatarURLString, avatarStyle: miniAvatarStyle)
                     avatarImageView.navi_setAvatar(userAvatar, withFadeTransitionDuration: avatarFadeTransitionDuration)
 
                 } else {
 
                     if let user = group.withFeed?.creator {
-                        let userAvatar = UserAvatar(userID: user.userID, avatarStyle: miniAvatarStyle)
+                        let userAvatar = UserAvatar(userID: user.userID, avatarURLString: user.avatarURLString, avatarStyle: miniAvatarStyle)
                         avatarImageView.navi_setAvatar(userAvatar, withFadeTransitionDuration: avatarFadeTransitionDuration)
 
                     } else {
-                        avatarImageView.image = UIImage(named: "default_avatar_60")
+                        avatarImageView.image = UIImage.yep_defaultAvatar60
                     }
                 }
 
